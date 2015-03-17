@@ -38,9 +38,10 @@ read_option = (name) ->
     atom.config.get("run-in-terminal.#{name}")
 
 
-add_command = (name, f) -> 
+add_command = (name, f) ->
 
     atom.commands.add("atom-workspace", "run-in-terminal:#{name}", f)
+
 
 module.exports =
 
@@ -49,9 +50,11 @@ module.exports =
         add_command("start-terminal-here", @start_terminal_here)
         add_command("start-terminal-here-and-run", @start_terminal_here_and_run)
 
+
     start_terminal_here: ->
 
         start_terminal(read_option("terminal"), read_option("terminal_args"))
+
 
     start_terminal_here_and_run: ->
 
