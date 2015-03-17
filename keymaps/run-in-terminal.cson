@@ -1,3 +1,4 @@
 "atom-workspace":
 
-    "ctrl-alt-o": "run-in-terminal:start_terminal_here"
+    "f9": "run-in-terminal:start-terminal-here"
+    "f5": "run-in-terminal:start-terminal-here-and-run"
