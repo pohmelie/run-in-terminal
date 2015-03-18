@@ -10,15 +10,24 @@ interpolate = (s, o) ->
     )
 
 
+strip = (s) ->
+
+    s.replace(/^\s+|\s+$/g, "")
+
+
 start_terminal = (terminal, args, exec_arg, command) =>
 
-    use_exec_cwd = read_option("use_exec_working_directory")
     file_path = atom.workspace.getActivePaneItem().buffer?.file?.path or ""
     file_dir = path.dirname(file_path)
     exec_cwd = if use_exec_cwd and file_path then file_dir else null
 
+    use_exec_cwd = read_option("use_exec_working_directory")
+    if read_option("save_before_launch") and file_path
+
+        atom.workspace.getActiveTextEditor()?.save()
+
     cmd = [terminal, args]
-    if command
+    if command and file_path
 
         cmd.push(exec_arg)
         cmd.push(command)
@@ -29,8 +38,21 @@ start_terminal = (terminal, args, exec_arg, command) =>
         file_path: file_path
 
     cmd_line = interpolate(cmd.join(" "), parameters)
-    console.log("running terminal", cmd_line)
-    child_process.exec(cmd_line, cwd: exec_cwd)
+    child_process.exec(cmd_line, cwd: exec_cwd, (error, stdout, stderr) ->
+
+        if error
+
+            console.error(
+                """
+                run-in-terminal error when child_process.exec ->
+                cmd = #{cmd_line}
+                error = #{error}
+                stdout = #{stdout}
+                stderr = #{stderr}
+                """
+            )
+
+    )
 
 
 read_option = (name) ->
@@ -47,8 +69,8 @@ module.exports =
 
     activate: (state) ->
 
-        add_command("start-terminal-here", @start_terminal_here)
-        add_command("start-terminal-here-and-run", @start_terminal_here_and_run)
+        add_command("start-terminal-here", () => @start_terminal_here())
+        add_command("start-terminal-here-and-run", () => @start_terminal_here_and_run())
 
 
     start_terminal_here: ->
@@ -58,12 +80,34 @@ module.exports =
 
     start_terminal_here_and_run: ->
 
-        if read_option("use_shebang")
+        file_path = atom.workspace.getActivePaneItem().buffer?.file?.path or ""
+        line = atom.workspace.getActiveTextEditor()?.lineTextForBufferRow(0)
+        if read_option("use_shebang") and line.indexOf("#!") == 0
 
-            line = atom.workspace.getActiveTextEditor()?.lineTextForBufferRow(0)
-            if line.indexOf("#!") == 0
+            command = line.slice(2) + " #{file_path}"
 
-                command = line.slice(2)
+        else
+
+            for pair in read_option("launchers").split(",").map(strip)
+
+                [end, launcher] = pair.split(" ").map(strip)
+                if file_path.indexOf(end, file_path.length - end.length) != -1
+
+                    command = launcher
+                    break
+
+        if command?
+
+            start_terminal(
+                read_option("terminal"),
+                read_option("terminal_args"),
+                read_option("terminal_exec_arg"),
+                command,
+            )
+
+        else
+
+            @start_terminal_here()
 
 
     config:
@@ -77,6 +121,12 @@ module.exports =
         use_shebang:
 
             title: "Use shebang if available"
+            type: "boolean"
+            default: true
+
+        save_before_launch:
+
+            title: "Save file before run terminal"
             type: "boolean"
             default: true
 
@@ -105,4 +155,4 @@ module.exports =
             title: "List of launchers by extension"
             description: "Format: extension launcher, … (see readme for more information)"
             type: "string"
-            default: ".py python3, .lua lua"
+            default: "your-launchers"
