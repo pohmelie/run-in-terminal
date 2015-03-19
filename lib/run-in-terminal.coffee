@@ -90,10 +90,10 @@ module.exports =
 
             for pair in read_option("launchers").split(",").map(strip)
 
-                [end, launcher] = pair.split(" ").map(strip)
+                [end, launcher...] = pair.split(" ").map(strip)
                 if file_path.indexOf(end, file_path.length - end.length) != -1
 
-                    command = launcher
+                    command = launcher.join(" ")
                     break
 
         if command?
