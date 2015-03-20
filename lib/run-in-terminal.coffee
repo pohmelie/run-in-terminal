@@ -15,7 +15,7 @@ strip = (s) ->
     s.replace(/^\s+|\s+$/g, "")
 
 
-start_terminal = (terminal, args, exec_arg, command) =>
+start_terminal = (terminal, exec_arg, command) =>
 
     file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path or ""
     file_dir = path.dirname(file_path)
@@ -26,7 +26,7 @@ start_terminal = (terminal, args, exec_arg, command) =>
 
         atom.workspace.getActiveTextEditor()?.save()
 
-    cmd = [terminal, args]
+    cmd = [terminal]
     if command and file_path
 
         cmd.push(exec_arg)
@@ -75,7 +75,7 @@ module.exports =
 
     start_terminal_here: ->
 
-        start_terminal(read_option("terminal"), read_option("terminal_args"))
+        start_terminal(read_option("terminal"))
 
 
     start_terminal_here_and_run: ->
@@ -100,7 +100,6 @@ module.exports =
 
             start_terminal(
                 read_option("terminal"),
-                read_option("terminal_args"),
                 read_option("terminal_exec_arg"),
                 command,
             )
@@ -132,27 +131,20 @@ module.exports =
 
         terminal:
 
-            title: "Terminal"
+            title: "Terminal with arguments"
             type: "string"
-            default: "your-favorite-terminal"
-
-        terminal_args:
-
-            title: "Terminal arguments"
-            description: "Interpolation will be applied (see readme for more information)"
-            type: "string"
-            default: "terminal-arguments"
+            default: "your-favorite-terminal --foo --bar"
 
         terminal_exec_arg:
 
             title: "Terminal execution argument"
-            description: "This is the last flag for executing command directly in terminal (see readme for more information)"
+            description: "This is the last flag for executing command directly in terminal (see the readme for more information)"
             type: "string"
             default: "terminal-execution-argument"
 
         launchers:
 
             title: "List of launchers by extension"
-            description: "Format: extension launcher, … (see readme for more information)"
+            description: "See the readme for more information"
             type: "string"
             default: "your-launchers"

@@ -14,15 +14,14 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 
 ## Options
 
-| Field                          |   Type  |                Description                |        Default value        |                 Example value                 |
-|:------------------------------:|:-------:|:-----------------------------------------:|:---------------------------:|:---------------------------------------------:|
-| Terminal                       | string  | path/command to start terminal            | your-favorite-terminal      | konsole                                       |
-| Terminal arguments             | string  |                                           | terminal-arguments          | --noclose --workdir {working_directory}       |
-| Terminal execution argument    | string  | argument to run some command in terminal  | terminal-execution-argument | -e                                            |
-| List of launchers by extension | string  | comma separated pairs: extension-launcher | your-launchers              | .py python3 {file_path}, .lua lua {file_path} |
-| Save file before run terminal  | boolean |                                           | true                        | true                                          |
-| Use exec cwd                   | boolean | child_process.exec cwd parameter          | true                        | true                                          |
-| Use shebang                    | boolean | use shebang if available                  | true                        | true                                          |
+| Field                          |   Type  |                Description                |        Default value             |                 Example value                   |
+|:------------------------------:|:-------:|:-----------------------------------------:|:--------------------------------:|:-----------------------------------------------:|
+| Terminal                       | string  | command to start terminal with argumenst  | your-favorite-terminal arguments | konsole --noclose --workdir {working_directory} |
+| Terminal execution argument    | string  | argument to run some command in terminal  | terminal-execution-argument      | -e                                              |
+| List of launchers by extension | string  | comma separated pairs: extension-launcher | your-launchers                   | .py python3 {file_path}, .lua lua {file_path}   |
+| Save file before run terminal  | boolean |                                           | true                             | true                                            |
+| Use exec cwd                   | boolean | child_process.exec cwd parameter          | true                             | true                                            |
+| Use shebang                    | boolean | use shebang if available                  | true                             | true                                            |
 
 ## Interpolation parameters
 | Parameter           | Description                       |
