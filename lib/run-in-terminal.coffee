@@ -17,7 +17,7 @@ strip = (s) ->
 
 start_terminal = (terminal, args, exec_arg, command) =>
 
-    file_path = atom.workspace.getActivePaneItem().buffer?.file?.path or ""
+    file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path or ""
     file_dir = path.dirname(file_path)
     exec_cwd = if use_exec_cwd and file_path then file_dir else null
 
@@ -80,13 +80,13 @@ module.exports =
 
     start_terminal_here_and_run: ->
 
-        file_path = atom.workspace.getActivePaneItem().buffer?.file?.path or ""
+        file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path
         line = atom.workspace.getActiveTextEditor()?.lineTextForBufferRow(0)
-        if read_option("use_shebang") and line.indexOf("#!") == 0
+        if read_option("use_shebang") and line?.indexOf("#!") == 0
 
             command = line.slice(2) + " #{file_path}"
 
-        else
+        else if file_path?
 
             for pair in read_option("launchers").split(",").map(strip)
 
