@@ -1,6 +1,6 @@
 # run-in-terminal package
 
-Run some commands in terminal, or just run terminal.
+Atom package for run some commands in terminal, or just run terminal.
 
 ## Why?
 Some packages can run terminal «here», some can run scripts not in terminal, but tabs/views/etc. I prefer terminal, so this one can run terminal «here» with any arguments and run scripts or any kind of shell «one-liners».
