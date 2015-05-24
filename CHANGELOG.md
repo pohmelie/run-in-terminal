@@ -1,3 +1,8 @@
+## 0.2.1 - Context menu ([bobrocke](https://github.com/pohmelie/run-in-terminal/issues/2) request)
+* context menu commands for «start terminal here» and «start terminal
+here and run»
+* option for toggle context menu items
+
 ## 0.2.0 - Options change
 * «terminal arguments» option deprecated since now, put your terminal arguments and interpolation variables into «terminal» option.
 
