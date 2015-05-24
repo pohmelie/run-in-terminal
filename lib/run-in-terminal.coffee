@@ -60,9 +60,14 @@ read_option = (name) ->
     atom.config.get("run-in-terminal.#{name}")
 
 
+build_command = (name) ->
+
+    "run-in-terminal:#{name}"
+
+
 add_command = (name, f) ->
 
-    atom.commands.add("atom-workspace", "run-in-terminal:#{name}", f)
+    atom.commands.add("atom-workspace", build_command(name), f)
 
 
 module.exports =
@@ -71,6 +76,20 @@ module.exports =
 
         add_command("start-terminal-here", () => @start_terminal_here())
         add_command("start-terminal-here-and-run", () => @start_terminal_here_and_run())
+        if read_option("context_menu")
+
+            atom.contextMenu.add({
+                "atom-workspace": [
+                    {
+                        label: "Start terminal here"
+                        command: build_command("start-terminal-here")
+                    },
+                    {
+                        label: "Start terminal here and run"
+                        command: build_command("start-terminal-here-and-run")
+                    }
+                ]
+            })
 
 
     start_terminal_here: ->
@@ -148,3 +167,10 @@ module.exports =
             description: "See the readme for more information"
             type: "string"
             default: "your-launchers"
+
+        context_menu:
+
+            title: "Show commands in context menu"
+            description: "Need restart (ctrl-alt-r)"
+            type: "boolean"
+            default: true
