@@ -1,3 +1,6 @@
+## 0.2.2 - Readme improvement
+* some help for os x users.
+
 ## 0.2.1 - Context menu ([bobrocke](https://github.com/pohmelie/run-in-terminal/issues/2) request)
 * context menu commands for «start terminal here» and «start terminal
 here and run»

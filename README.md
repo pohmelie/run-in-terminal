@@ -23,13 +23,17 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 | Use exec cwd                   | boolean | child_process.exec cwd parameter          | true                             | true                                            |
 | Use shebang                    | boolean | use shebang if available                  | true                             | true                                            |
 
-Windows users may use «start» command with «cmd»:
+#### Windows users may use «start» command with «cmd»:
 
     start /D {working_directory} C:\Windows\System32\cmd.exe /u
 
 and «terminal execution argument»:
 
     /k
+
+#### Mac users may use «open» command with their favorite terminal app:
+
+    open -a /path/to/terminal.app
 
 ## Interpolation parameters
 | Parameter           | Description                       |
