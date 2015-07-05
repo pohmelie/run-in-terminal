@@ -40,6 +40,8 @@ and «terminal execution argument»:
 |:-------------------:|:---------------------------------:|
 | {file_path}         | path to current file              |
 | {working_directory} | path to current working directory |
+| {project_directory} | path to project's root directory  |
+| {git_directory}     | path to nearest git root directory|
 
 ## How it works
 In deep, run-in-terminal use node.js child_process.exec function, so exec have cwd (current working directory) argument. But it doesn't works for any terminal. Some of them need launch «working directory» argument. That's why run-in-terminal have string interpolation of arguments. What is string interpolation means? run-in-terminal build full command at first step and replace predefined substrings with parameters at second. For values from «example value» column above we can have such scenario: opened /path/to/somedir/foo.py, which have #!/usr/bin/python3 shebang
