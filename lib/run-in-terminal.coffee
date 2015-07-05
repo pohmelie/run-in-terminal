@@ -1,5 +1,6 @@
 child_process = require('child_process')
 path = require('path')
+fs = require('fs')
 
 
 interpolate = (s, o) ->
@@ -9,19 +10,39 @@ interpolate = (s, o) ->
         (a, b) -> if typeof(o[b]) in ["string", "number"] then o[b] else a
     )
 
-
 strip = (s) ->
 
     s.replace(/^\s+|\s+$/g, "")
+
+
+project_directory = (file_dir) ->
+
+  for dir in atom.project.getDirectories()
+    if dir.contains(file_dir)
+      return dir.path
+  return file_dir
+
+
+git_directory = (file_dir) ->
+
+  parts = file_dir.split /[\/\\]/
+  while(parts.length)
+    if fs.existsSync path.join.apply null, parts.concat '.git'
+      return path.join.apply null, parts
+    parts.pop()
+  return file_dir
 
 
 start_terminal = (terminal, exec_arg, command) =>
 
     file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path or ""
     file_dir = path.dirname(file_path)
-    exec_cwd = if use_exec_cwd and file_path then file_dir else null
+    proj_dir = project_directory(file_dir)
+    git_dir = git_directory(file_dir)
 
     use_exec_cwd = read_option("use_exec_working_directory")
+    exec_cwd = if use_exec_cwd and file_path then file_dir else null
+
     if read_option("save_before_launch") and file_path
 
         atom.workspace.getActiveTextEditor()?.save()
@@ -35,6 +56,8 @@ start_terminal = (terminal, exec_arg, command) =>
     parameters =
 
         working_directory: file_dir
+        project_directory: proj_dir
+        git_directory: git_dir
         file_path: file_path
 
     cmd_line = interpolate(cmd.join(" "), parameters)
