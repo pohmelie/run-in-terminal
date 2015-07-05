@@ -10,6 +10,7 @@ interpolate = (s, o) ->
         (a, b) -> if typeof(o[b]) in ["string", "number"] then o[b] else a
     )
 
+
 strip = (s) ->
 
     s.replace(/^\s+|\s+$/g, "")
@@ -17,20 +18,27 @@ strip = (s) ->
 
 project_directory = (file_dir) ->
 
-  for dir in atom.project.getDirectories()
-    if dir.contains(file_dir)
-      return dir.path
-  return file_dir
+    for dir in atom.project.getDirectories()
+
+        if dir.contains(file_dir)
+
+            return dir.path
+
+    return file_dir
 
 
 git_directory = (file_dir) ->
 
-  parts = file_dir.split /[\/\\]/
-  while(parts.length)
-    if fs.existsSync path.join.apply null, parts.concat '.git'
-      return path.join.apply null, parts
-    parts.pop()
-  return file_dir
+    path_info = path.parse(file_dir)
+    while path_info.root != path_info.dir
+
+        if fs.existsSync(path.join(path_info.dir, ".git"))
+
+            return path_info.dir
+
+        path_info = path.parse(path_info.dir)
+
+    return file_dir
 
 
 start_terminal = (terminal, exec_arg, command) =>
