@@ -1,3 +1,9 @@
+## 0.3.0 - New interpolation parameters and bugfix
+* New interpolation parameters
+* "exec_cwd" bugfix
+
+Thanks to [clintwood](https://github.com/clintwood)
+
 ## 0.2.2 - Readme improvement
 * some help for os x users.
 
