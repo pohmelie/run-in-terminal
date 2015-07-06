@@ -29,7 +29,7 @@ project_directory = (file_dir) ->
 
 git_directory = (file_dir) ->
 
-    path_info = path.parse(file_dir)
+    path_info = path.parse(path.join(file_dir, "fictive"))
     while path_info.root != path_info.dir
 
         if fs.existsSync(path.join(path_info.dir, ".git"))
