@@ -1,5 +1,10 @@
+## 0.4.0 - autoquotation
+* option for autoquotation (adding double quotation mark to paths)
+
+Thanks to [LeoVerto](https://github.com/LeoVerto)
+
 ## 0.3.0 - New interpolation parameters and bugfix
-* New interpolation parameters
+* new interpolation parameters
 * "exec_cwd" bugfix
 
 Thanks to [clintwood](https://github.com/clintwood)

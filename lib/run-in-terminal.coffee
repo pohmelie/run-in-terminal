@@ -1,14 +1,13 @@
-child_process = require('child_process')
-path = require('path')
-fs = require('fs')
+child_process = require("child_process")
+path = require("path")
+fs = require("fs")
 
 
 interpolate = (s, o) ->
 
-    s.replace(
-        /{([^{}]*)}/g,
-        (a, b) -> if typeof(o[b]) in ["string", "number"] then o[b] else a
-    )
+    quote = (s) -> if read_option("autoquotation") then "\"#{s}\"" else s
+    choose = (a, b) -> if typeof(o[b]) in ["string", "number"] then o[b] else a
+    s.replace(/{([^{}]*)}/g, (a, b) -> quote(choose(a, b)))
 
 
 strip = (s) ->
@@ -176,6 +175,12 @@ module.exports =
         save_before_launch:
 
             title: "Save file before run terminal"
+            type: "boolean"
+            default: true
+
+        autoquotation:
+
+            title: "Autoquote paths with double quotation mark"
             type: "boolean"
             default: true
 

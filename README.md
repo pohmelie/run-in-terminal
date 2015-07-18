@@ -14,14 +14,15 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 
 ## Options
 
-| Field                          |   Type  |                Description                |        Default value             |                 Example value                   |
-|:------------------------------:|:-------:|:-----------------------------------------:|:--------------------------------:|:-----------------------------------------------:|
-| Terminal                       | string  | command to start terminal with argumenst  | your-favorite-terminal arguments | konsole --noclose --workdir {working_directory} |
-| Terminal execution argument    | string  | argument to run some command in terminal  | terminal-execution-argument      | -e                                              |
-| List of launchers by extension | string  | comma separated pairs: extension-launcher | your-launchers                   | .py python3 {file_path}, .lua lua {file_path}   |
-| Save file before run terminal  | boolean |                                           | true                             | true                                            |
-| Use exec cwd                   | boolean | child_process.exec cwd parameter          | true                             | true                                            |
-| Use shebang                    | boolean | use shebang if available                  | true                             | true                                            |
+| Field                          |   Type  |                Description                               |        Default value             |                 Example value                   |
+|:------------------------------:|:-------:|:--------------------------------------------------------:|:--------------------------------:|:-----------------------------------------------:|
+| Terminal                       | string  | command to start terminal with argumenst                 | your-favorite-terminal arguments | konsole --noclose --workdir {working_directory} |
+| Terminal execution argument    | string  | argument to run some command in terminal                 | terminal-execution-argument      | -e                                              |
+| List of launchers by extension | string  | comma separated pairs: extension-launcher                | your-launchers                   | .py python3 {file_path}, .lua lua {file_path}   |
+| Save file before run terminal  | boolean |                                                          | true                             | true                                            |
+| Use exec cwd                   | boolean | child_process.exec cwd parameter                         | true                             | true                                            |
+| Use shebang                    | boolean | use shebang if available                                 | true                             | true                                            |
+| Autoquotation                  | boolean | adding double quotation mark to interpolation parameters | true                             | true                                            |
 
 #### Windows users may use «start» command with «cmd»:
 
@@ -50,6 +51,9 @@ In deep, run-in-terminal use node.js child_process.exec function, so exec have c
 
 this will be interpolated to:
 
-    start-terminal-here-and-run -> konsole --noclose --workdir /path/to/somedir -e /usr/bin/python3 /path/to/somedir/foo.py
+    start-terminal-here-and-run -> konsole --noclose --workdir "/path/to/somedir" -e "/usr/bin/python3 /path/to/somedir/foo.py"
 
 If run-in-terminal can't determine launcher or file_path (file not saved and have no name) it will do start-terminal-here.
+
+## Thanks to:
+[bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto)
