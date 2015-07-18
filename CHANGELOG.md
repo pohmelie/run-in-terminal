@@ -1,3 +1,5 @@
+## 0.4.1 - readme typo
+
 ## 0.4.0 - autoquotation
 * option for autoquotation (adding double quotation mark to paths)
 

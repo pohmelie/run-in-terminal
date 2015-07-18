@@ -51,7 +51,7 @@ In deep, run-in-terminal use node.js child_process.exec function, so exec have c
 
 this will be interpolated to:
 
-    start-terminal-here-and-run -> konsole --noclose --workdir "/path/to/somedir" -e "/usr/bin/python3 /path/to/somedir/foo.py"
+    start-terminal-here-and-run -> konsole --noclose --workdir "/path/to/somedir" -e /usr/bin/python3 "/path/to/somedir/foo.py"
 
 If run-in-terminal can't determine launcher or file_path (file not saved and have no name) it will do start-terminal-here.
 
