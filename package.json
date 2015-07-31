@@ -1,7 +1,7 @@
 {
   "name": "run-in-terminal",
   "main": "./lib/run-in-terminal",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Run some commands in terminal, or just run terminal",
   "repository": "https://github.com/pohmelie/run-in-terminal",
   "license": "MIT",
