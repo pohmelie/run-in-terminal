@@ -43,16 +43,15 @@ git_directory = (file_dir) ->
 start_terminal = (terminal, exec_arg, command) =>
 
     file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path or ""
+    file_dir = path.dirname(file_path)
 
-    # if there is no file path then default to first project directory
     if !file_path
-      proj_dirs = atom.project.getDirectories()
-      if proj_dirs.length
-        file_path = proj_dirs[0].path
-        file_dir = file_path
 
-    if !file_dir
-      file_dir = path.dirname(file_path)
+        proj_dirs = atom.project.getDirectories()
+        if proj_dirs.length
+
+            file_path = proj_dirs[0].path
+            file_dir = file_path
 
     proj_dir = project_directory(file_dir)
     git_dir = git_directory(file_dir)
