@@ -1,3 +1,8 @@
+## 0.4.2 - bugfix
+* fixed: terminal starts on «strange» folder, when there is no open file tab(s) (on windows).
+
+Thanks to [clintwood](https://github.com/clintwood)
+
 ## 0.4.1 - readme typo
 
 ## 0.4.0 - autoquotation
