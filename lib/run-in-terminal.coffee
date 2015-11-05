@@ -45,6 +45,10 @@ start_terminal = (terminal, exec_arg, command) =>
     file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path or ""
     file_dir = path.dirname(file_path)
 
+    if read_option("save_before_launch") and file_path
+
+        atom.workspace.getActiveTextEditor()?.save()
+
     if !file_path
 
         proj_dirs = atom.project.getDirectories()
@@ -58,10 +62,6 @@ start_terminal = (terminal, exec_arg, command) =>
 
     use_exec_cwd = read_option("use_exec_working_directory")
     exec_cwd = if use_exec_cwd and file_path then file_dir else null
-
-    if read_option("save_before_launch") and file_path
-
-        atom.workspace.getActiveTextEditor()?.save()
 
     cmd = [terminal]
     if command and file_path
