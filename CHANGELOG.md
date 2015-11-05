@@ -1,3 +1,8 @@
+## 0.4.3 - bugfix
+* fixed: start terminal on unsaved/unnamed file crashes when trying to save.
+
+Thanks to [marales](https://github.com/marales)
+
 ## 0.4.2 - bugfix
 * fixed: terminal starts on «strange» folder, when there is no open file tab(s) (on windows).
 
