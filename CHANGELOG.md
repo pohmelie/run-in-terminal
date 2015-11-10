@@ -1,3 +1,6 @@
+## x.x.x - separate areas ([djengineerllc](https://github.com/pohmelie/run-in-terminal/issues/12) request)
+* feature: start terminal (and run) for any directory/file in tree/tab by context menu
+
 ## 0.4.3 - bugfix
 * fixed: start terminal on unsaved/unnamed file crashes when trying to save.
 

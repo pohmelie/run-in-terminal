@@ -1,4 +1,4 @@
 "atom-workspace":
 
-    "f9": "run-in-terminal:start-terminal-here"
-    "f5": "run-in-terminal:start-terminal-here-and-run"
+    "f9": "run-in-terminal:editor-start-terminal-here"
+    "f5": "run-in-terminal:editor-start-terminal-here-and-run"

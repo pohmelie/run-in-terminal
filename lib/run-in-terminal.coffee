@@ -40,41 +40,94 @@ git_directory = (file_dir) ->
     return file_dir
 
 
-start_terminal = (terminal, exec_arg, command) =>
+read_shebang = (file_path) =>
 
-    file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path or ""
-    file_dir = path.dirname(file_path)
+    fd = fs.openSync(file_path, "r")
+    try
 
-    if read_option("save_before_launch") and file_path
+        maximum_length = read_option("maximum_shebang_length")
+        buffer = new Buffer(maximum_length)
+        fs.readSync(fd, buffer, 0, maximum_length, 0)
+        [shebang, ...] = buffer.toString().split("\n")
 
-        atom.workspace.getActiveTextEditor()?.save()
+    finally
 
-    if !file_path
+        fs.closeSync(fd)
 
-        proj_dirs = atom.project.getDirectories()
-        if proj_dirs.length
+    if shebang.indexOf("#!") == 0
 
-            file_path = proj_dirs[0].path
-            file_dir = file_path
+        return strip(shebang[2..])
 
-    proj_dir = project_directory(file_dir)
-    git_dir = git_directory(file_dir)
 
-    use_exec_cwd = read_option("use_exec_working_directory")
-    exec_cwd = if use_exec_cwd and file_path then file_dir else null
+start_terminal = (start_path) =>
 
-    cmd = [terminal]
-    if command and file_path
+    try
 
-        cmd.push(exec_arg)
-        cmd.push(command)
+        stats = fs.statSync(start_path)
 
-    parameters =
+    catch err
 
-        working_directory: file_dir
-        project_directory: proj_dir
-        git_directory: git_dir
-        file_path: file_path
+        console.error(
+            """
+            run-in-terminal error: when statSync('#{start_path}')
+            #{err}
+            """
+        )
+        return
+
+    cmd = [read_option("terminal")]
+    parameters = {}
+    if stats.isFile()
+
+        file_path = start_path
+        save_file_in_editor(file_path)
+        parameters.file_path = file_path
+        parameters.working_directory = path.dirname(file_path)
+        if read_option("use_shebang")
+
+            shebang = read_shebang(file_path)
+
+        for pair in read_option("launchers").split(",").map(strip)
+
+            [end, launcher...] = pair.split(" ").map(strip)
+            if file_path.indexOf(end, file_path.length - end.length) != -1
+
+                current_launcher = launcher.join(" ")
+                break
+
+        if shebang
+
+            cmd.push(read_option("terminal_exec_arg"))
+            cmd.push(shebang)
+            cmd.push(file_path)
+
+        else if current_launcher
+
+            cmd.push(read_option("terminal_exec_arg"))
+            cmd.push(current_launcher)
+
+    else if stats.isDirectory()
+
+        parameters.working_directory = start_path
+
+    else
+
+        console.error(
+            """
+            run-in-terminal error: #{start_path} is not file or dir
+            """
+        )
+
+    parameters.project_directory = project_directory(parameters.working_directory)
+    parameters.git_directory = git_directory(parameters.working_directory)
+
+    if read_option("use_exec_working_directory")
+
+        exec_cwd = parameters.working_directory
+
+    else
+
+        exec_cwd = null
 
     cmd_line = interpolate(cmd.join(" "), parameters)
     child_process.exec(cmd_line, cwd: exec_cwd, (error, stdout, stderr) ->
@@ -83,7 +136,7 @@ start_terminal = (terminal, exec_arg, command) =>
 
             console.error(
                 """
-                run-in-terminal error when child_process.exec ->
+                run-in-terminal error: child_process.exec ->
                 cmd = #{cmd_line}
                 error = #{error}
                 stdout = #{stdout}
@@ -99,73 +152,111 @@ read_option = (name) ->
     atom.config.get("run-in-terminal.#{name}")
 
 
-build_command = (name) ->
+save_file_in_editor = (file_path) ->
 
-    "run-in-terminal:#{name}"
+    if read_option("save_before_launch")
+
+        for editor in atom.workspace.getTextEditors()
+
+            if file_path == editor.getPath() and editor.isModified()
+
+                editor.save()
+                break
 
 
-add_command = (name, f) ->
+selectors =
 
-    atom.commands.add("atom-workspace", build_command(name), f)
+    tree: ".tree-view-resizer"
+    tabs: ".tab-bar"
+    editor: "atom-text-editor"
 
 
 module.exports =
 
     activate: (state) ->
 
-        add_command("start-terminal-here", () => @start_terminal_here())
-        add_command("start-terminal-here-and-run", () => @start_terminal_here_and_run())
-        if read_option("context_menu")
+        commands = [
+            [
+                selectors.tree,
+                "tree-start-terminal-here",
+                "Start terminal here [tree]",
+                () => @tree_start_terminal_here(false)
+            ],
+            [
+                selectors.tree,
+                "tree-start-terminal-here-and-run",
+                "Start terminal here and run [tree]",
+                () => @tree_start_terminal_here(true)
+            ],
+            [
+                selectors.tabs,
+                "tab-start-terminal-here",
+                "Start terminal here [tab]",
+                () => @tab_start_terminal_here(false)
+            ],
+            [
+                selectors.tabs,
+                "tab-start-terminal-here-and-run",
+                "Start terminal here and run [tab]",
+                () => @tab_start_terminal_here(true)
+            ],
+            [
+                selectors.editor,
+                "editor-start-terminal-here",
+                "Start terminal here [editor]",
+                () => @editor_start_terminal_here(false)
+            ],
+            [
+                selectors.editor,
+                "editor-start-terminal-here-and-run",
+                "Start terminal here and run [editor]",
+                () => @editor_start_terminal_here(true)
+            ]
+        ]
 
-            atom.contextMenu.add({
-                "atom-workspace": [
-                    {
-                        label: "Start terminal here"
-                        command: build_command("start-terminal-here")
-                    },
-                    {
-                        label: "Start terminal here and run"
-                        command: build_command("start-terminal-here-and-run")
-                    }
-                ]
-            })
+        menu = {}
+        use_context_menu = read_option("context_menu")
+        for [selector, name, desc, f] in commands
 
+            command = "run-in-terminal:#{name}"
+            atom.commands.add(selector, command, f)
+            if use_context_menu
 
-    start_terminal_here: ->
+                menu[selector] ?= []
+                menu[selector].push({
+                    label: desc
+                    command: command
+                })
 
-        start_terminal(read_option("terminal"))
+        atom.contextMenu.add(menu)
 
+    tree_start_terminal_here: (run) ->
 
-    start_terminal_here_and_run: ->
+        li = document.querySelector(selectors.tree + " li.selected")
+        is_dir = "directory" in li.classList
+        start_path = li.querySelector("span.name").getAttribute("data-path")
+        start_path = path.dirname(start_path) if not (is_dir or run)
+        start_terminal(start_path)
 
-        file_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path
-        line = atom.workspace.getActiveTextEditor()?.lineTextForBufferRow(0)
-        if read_option("use_shebang") and line?.indexOf("#!") == 0
+    tab_start_terminal_here: (run) ->
 
-            command = line.slice(2) + " #{file_path}"
+        li = document.querySelector("li.tab.right-clicked")
+        if li
 
-        else if file_path?
+            div = li.querySelector(".title")
+            if div and div.hasAttribute("data-path")
 
-            for pair in read_option("launchers").split(",").map(strip)
+                start_path = div.getAttribute("data-path")
+                start_path = path.dirname(start_path) if not run
+                start_terminal(start_path)
 
-                [end, launcher...] = pair.split(" ").map(strip)
-                if file_path.indexOf(end, file_path.length - end.length) != -1
+    editor_start_terminal_here: (run) ->
 
-                    command = launcher.join(" ")
-                    break
+        start_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path
+        if start_path
 
-        if command?
-
-            start_terminal(
-                read_option("terminal"),
-                read_option("terminal_exec_arg"),
-                command,
-            )
-
-        else
-
-            @start_terminal_here()
-
+            start_path = path.dirname(start_path) if not run
+            start_terminal(start_path)
 
     config:
 
@@ -180,6 +271,12 @@ module.exports =
             title: "Use shebang if available"
             type: "boolean"
             default: true
+
+        maximum_shebang_length:
+
+            title: "Maximum length of shebang to read"
+            type: "integer"
+            default: 256
 
         save_before_launch:
 
