@@ -13,10 +13,9 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 * launchers — file extension based command chooser
 
 ## What's new ([changelog](https://github.com/pohmelie/run-in-terminal/blob/master/CHANGELOG.md))
-#### 0.4.3 - bugfix
-* fixed: start terminal on unsaved/unnamed file crashes when trying to autosave.
+#### 0.5.0 - separate areas (probably [djengineerllc](https://github.com/pohmelie/run-in-terminal/issues/12) request)
+* feature: start terminal (and run) for any directory/file in tree/tab by context menu
 
-Thanks to [marales](https://github.com/marales)
 ## Options
 
 | Field                          |   Type  |                Description                               |        Default value             |                 Example value                   |
@@ -61,4 +60,4 @@ this will be interpolated to:
 If run-in-terminal can't determine launcher or file_path (file not saved and have no name) it will do start-terminal-here.
 
 ## Thanks to:
-[bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto), [marales](https://github.com/marales)
+[bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto), [marales](https://github.com/marales), [djengineerllc](https://github.com/djengineerllc)
