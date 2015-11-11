@@ -9,8 +9,9 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 * start terminal here
 * start terminal here and run some command
 * string interpolation with arguments
-* understanding shebang
+* understanding shebang (utf-8 only)
 * launchers — file extension based command chooser
+* separate context menus for tabs, tree and editor
 
 ## What's new ([changelog](https://github.com/pohmelie/run-in-terminal/blob/master/CHANGELOG.md))
 #### 0.5.0 - separate areas (probably [djengineerllc](https://github.com/pohmelie/run-in-terminal/issues/12) request)
