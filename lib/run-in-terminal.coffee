@@ -180,37 +180,55 @@ module.exports =
                 selectors.tree,
                 "tree-start-terminal-here",
                 "Start terminal here [tree]",
-                () => @tree_start_terminal_here(false)
+                () => @tree_start_terminal_here(false, false)
             ],
             [
                 selectors.tree,
                 "tree-start-terminal-here-and-run",
                 "Start terminal here and run [tree]",
-                () => @tree_start_terminal_here(true)
+                () => @tree_start_terminal_here(true, false)
+            ],
+            [
+                selectors.tree,
+                "tree-start-terminal-here-and-run-with-par",
+                "Start terminal here and run [tree] (with par)",
+                () => @tree_start_terminal_here(true, true)
             ],
             [
                 selectors.tabs,
                 "tab-start-terminal-here",
                 "Start terminal here [tab]",
-                () => @tab_start_terminal_here(false)
+                () => @tab_start_terminal_here(false, false)
             ],
             [
                 selectors.tabs,
                 "tab-start-terminal-here-and-run",
                 "Start terminal here and run [tab]",
-                () => @tab_start_terminal_here(true)
+                () => @tab_start_terminal_here(true, false)
+            ],
+            [
+                selectors.tabs,
+                "tab-start-terminal-here-and-run-with-par",
+                "Start terminal here and run [tab] (with par)",
+                () => @tab_start_terminal_here(true, true)
             ],
             [
                 selectors.editor,
                 "editor-start-terminal-here",
                 "Start terminal here [editor]",
-                () => @editor_start_terminal_here(false)
+                () => @editor_start_terminal_here(false, false)
             ],
             [
                 selectors.editor,
                 "editor-start-terminal-here-and-run",
                 "Start terminal here and run [editor]",
-                () => @editor_start_terminal_here(true)
+                () => @editor_start_terminal_here(true, false)
+            ],
+            [
+                selectors.editor,
+                "editor-start-terminal-here-and-run-with-par",
+                "Start terminal here and run [editor] (with par)",
+                () => @editor_start_terminal_here(true, true)
             ]
         ]
 
@@ -230,7 +248,10 @@ module.exports =
 
         atom.contextMenu.add(menu)
 
-    tree_start_terminal_here: (run) ->
+    tree_start_terminal_here: (run, par) ->
+
+        # if par
+            # Make modal window, get parameters, run command with parameters!
 
         li = document.querySelector(selectors.tree + " li.selected")
         is_dir = "directory" in li.classList
@@ -238,7 +259,10 @@ module.exports =
         start_path = path.dirname(start_path) if not (is_dir or run)
         start_terminal(start_path)
 
-    tab_start_terminal_here: (run) ->
+    tab_start_terminal_here: (run, par) ->
+
+        # if par
+            # Make modal window, get parameters, run command with parameters!
 
         li = document.querySelector("li.tab.right-clicked")
         if li
@@ -250,9 +274,13 @@ module.exports =
                 start_path = path.dirname(start_path) if not run
                 start_terminal(start_path)
 
-    editor_start_terminal_here: (run) ->
+    editor_start_terminal_here: (run, par) ->
 
         start_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path
+
+        # if par
+            # Make modal window, get parameters, run command with parameters!
+
         if start_path
 
             start_path = path.dirname(start_path) if not run
