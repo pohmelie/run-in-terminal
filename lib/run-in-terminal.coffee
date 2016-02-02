@@ -248,9 +248,9 @@ module.exports =
 
         atom.contextMenu.add(menu)
 
-    tree_start_terminal_here: (run, par) ->
+    tree_start_terminal_here: (run, ask_parameters) ->
 
-        # if par
+        # if ask_parameters
             # Make modal window, get parameters, run command with parameters!
 
         li = document.querySelector(selectors.tree + " li.selected")
@@ -259,9 +259,9 @@ module.exports =
         start_path = path.dirname(start_path) if not (is_dir or run)
         start_terminal(start_path)
 
-    tab_start_terminal_here: (run, par) ->
+    tab_start_terminal_here: (run, ask_parameters) ->
 
-        # if par
+        # if ask_parameters
             # Make modal window, get parameters, run command with parameters!
 
         li = document.querySelector("li.tab.right-clicked")
@@ -274,11 +274,11 @@ module.exports =
                 start_path = path.dirname(start_path) if not run
                 start_terminal(start_path)
 
-    editor_start_terminal_here: (run, par) ->
+    editor_start_terminal_here: (run, ask_parameters) ->
 
         start_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path
 
-        # if par
+        # if ask_parameters
             # Make modal window, get parameters, run command with parameters!
 
         if start_path
