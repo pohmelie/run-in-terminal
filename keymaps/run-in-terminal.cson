@@ -2,3 +2,4 @@
 
     "f9": "run-in-terminal:editor-start-terminal-here"
     "f5": "run-in-terminal:editor-start-terminal-here-and-run"
+    "f6": "run-in-terminal:editor-start-terminal-here-and-run-with-arguments"

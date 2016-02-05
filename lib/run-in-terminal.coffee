@@ -59,7 +59,7 @@ read_shebang = (file_path) =>
         return strip(shebang[2..])
 
 
-start_terminal = (start_path) =>
+start_terminal = (start_path, args) =>
 
     try
 
@@ -105,6 +105,8 @@ start_terminal = (start_path) =>
 
             cmd.push(read_option("terminal_exec_arg"))
             cmd.push(current_launcher)
+
+        cmd.push(args) if args
 
     else if stats.isDirectory()
 
@@ -171,6 +173,67 @@ selectors =
     editor: "atom-text-editor"
 
 
+class ArgumentsRequester
+
+    constructor: (label_text) ->
+
+        @root = document.createElement("div")
+        @root.classList.add("run-in-terminal-input-with-label")
+
+        @message = document.createElement("div")
+        @message.textContent = label_text
+        @message.classList.add("message")
+        @root.appendChild(@message)
+
+        @line_edit_model = atom.workspace.buildTextEditor(mini: true)
+        @line_edit_view = atom.views.getView(@line_edit_model)
+        @root.appendChild(@line_edit_view)
+
+        @panel = atom.workspace.addModalPanel({
+
+            item: @root,
+            visible: false,
+
+        })
+
+        @line_edit_view.addEventListener("focusout", @save_and_hide)
+        @line_edit_view.addEventListener("keydown", @key_pressed)
+
+        @attributes_memory = {}
+
+    destroy: ->
+
+        @panel.destroy()
+        @root.remove()
+
+    show: (@path) ->
+
+        if not @panel.isVisible()
+
+            @line_edit_model.setText(@attributes_memory[@path] or "")
+            @panel.show()
+            @line_edit_view.focus()
+            @line_edit_model.selectAll()
+
+    save_and_hide: =>
+
+        @attributes_memory[@path] = @line_edit_model.getText()
+        @panel.hide()
+
+    key_pressed: (e) =>
+
+        switch e.keyCode
+
+            when 27
+
+                @save_and_hide()
+
+            when 13
+
+                @save_and_hide()
+                start_terminal(@path or "", @line_edit_model.getText())
+
+
 module.exports =
 
     activate: (state) ->
@@ -180,37 +243,55 @@ module.exports =
                 selectors.tree,
                 "tree-start-terminal-here",
                 "Start terminal here [tree]",
-                () => @tree_start_terminal_here(false)
+                () => @tree_start_terminal_here(false, false)
             ],
             [
                 selectors.tree,
                 "tree-start-terminal-here-and-run",
                 "Start terminal here and run [tree]",
-                () => @tree_start_terminal_here(true)
+                () => @tree_start_terminal_here(true, false)
+            ],
+            [
+                selectors.tree,
+                "tree-start-terminal-here-and-run-with-arguments",
+                "Start terminal here and run with arguments [tree]",
+                () => @tree_start_terminal_here(true, true)
             ],
             [
                 selectors.tabs,
                 "tab-start-terminal-here",
                 "Start terminal here [tab]",
-                () => @tab_start_terminal_here(false)
+                () => @tab_start_terminal_here(false, false)
             ],
             [
                 selectors.tabs,
                 "tab-start-terminal-here-and-run",
                 "Start terminal here and run [tab]",
-                () => @tab_start_terminal_here(true)
+                () => @tab_start_terminal_here(true, false)
+            ],
+            [
+                selectors.tabs,
+                "tab-start-terminal-here-and-run-with-arguments",
+                "Start terminal here and run with arguments [tab]",
+                () => @tab_start_terminal_here(true, true)
             ],
             [
                 selectors.editor,
                 "editor-start-terminal-here",
                 "Start terminal here [editor]",
-                () => @editor_start_terminal_here(false)
+                () => @editor_start_terminal_here(false, false)
             ],
             [
                 selectors.editor,
                 "editor-start-terminal-here-and-run",
                 "Start terminal here and run [editor]",
-                () => @editor_start_terminal_here(true)
+                () => @editor_start_terminal_here(true, false)
+            ],
+            [
+                selectors.editor,
+                "editor-start-terminal-here-and-run-with-arguments",
+                "Start terminal here and run with arguments [editor]",
+                () => @editor_start_terminal_here(true, true)
             ]
         ]
 
@@ -230,15 +311,27 @@ module.exports =
 
         atom.contextMenu.add(menu)
 
-    tree_start_terminal_here: (run) ->
+        @arguments_view = new ArgumentsRequester("Run arguments:")
+
+    deactivate: ->
+
+        @arguments_view.destroy()
+
+    tree_start_terminal_here: (should_run, request_arguments) ->
 
         li = document.querySelector(selectors.tree + " li.selected")
         is_dir = "directory" in li.classList
         start_path = li.querySelector("span.name").getAttribute("data-path")
-        start_path = path.dirname(start_path) if not (is_dir or run)
-        start_terminal(start_path)
+        start_path = path.dirname(start_path) if not (is_dir or should_run)
+        if request_arguments
 
-    tab_start_terminal_here: (run) ->
+            @arguments_view.show(start_path)
+
+        else
+
+            start_terminal(start_path)
+
+    tab_start_terminal_here: (should_run, request_arguments) ->
 
         li = document.querySelector("li.tab.right-clicked")
         if li
@@ -247,16 +340,28 @@ module.exports =
             if div and div.hasAttribute("data-path")
 
                 start_path = div.getAttribute("data-path")
-                start_path = path.dirname(start_path) if not run
-                start_terminal(start_path)
+                start_path = path.dirname(start_path) if not should_run
+                if request_arguments
 
-    editor_start_terminal_here: (run) ->
+                    @arguments_view.show(start_path)
+
+                else
+
+                    start_terminal(start_path)
+
+    editor_start_terminal_here: (should_run, request_arguments) ->
 
         start_path = atom.workspace.getActivePaneItem()?.buffer?.file?.path
         if start_path
 
-            start_path = path.dirname(start_path) if not run
-            start_terminal(start_path)
+            start_path = path.dirname(start_path) if not should_run
+            if request_arguments
+
+                @arguments_view.show(start_path)
+
+            else
+
+                start_terminal(start_path)
 
     config:
 

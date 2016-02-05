@@ -8,14 +8,15 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 ## Features
 * start terminal here
 * start terminal here and run some command
+* start terminal here and run some command with extra arguments
 * string interpolation with arguments
 * understanding shebang (utf-8 only)
 * launchers — file extension based command chooser
 * separate context menus for tabs, tree and editor
 
 ## What's new ([changelog](https://github.com/pohmelie/run-in-terminal/blob/master/CHANGELOG.md))
-#### 0.5.0 - separate areas (probably [djengineerllc](https://github.com/pohmelie/run-in-terminal/issues/12) request)
-* feature: start terminal (and run) for any directory/file in tree/tab by context menu
+#### 0.6.0 - run with arguments
+* feature: start terminal and run with extra arguments
 
 ## Options
 
@@ -61,4 +62,4 @@ this will be interpolated to:
 If run-in-terminal can't determine launcher or file_path (file not saved and have no name) it will do start-terminal-here.
 
 ## Thanks to:
-[bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto), [marales](https://github.com/marales), [djengineerllc](https://github.com/djengineerllc)
+[bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto), [marales](https://github.com/marales), [djengineerllc](https://github.com/djengineerllc), [LevPasha](https://github.com/LevPasha)

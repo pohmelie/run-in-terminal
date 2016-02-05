@@ -1,3 +1,8 @@
+## 0.6.0 - run with arguments
+* feature: start terminal and run with extra arguments
+
+Thanks to [LevPasha](https://github.com/LevPasha)
+
 ## 0.5.0 - separate areas (probably [djengineerllc](https://github.com/pohmelie/run-in-terminal/issues/12) request)
 * feature: start terminal (and run) for any directory/file in tree/tab by context menu
 
