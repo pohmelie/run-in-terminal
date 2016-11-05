@@ -61,5 +61,38 @@ this will be interpolated to:
 
 If run-in-terminal can't determine launcher or file_path (file not saved and have no name) it will do start-terminal-here.
 
+## A real life example
+MacOS ver. 10.12.1, runing Atom ver. 1.11.2, using run-in-terminal ver. 0.6.0. The tested program is called test.py and in order to run the script successfully, one first change the python script into excutable:
+
+chmod +x test.py
+
+Then, one has to add the shebang into the first line of the python script:
+
+ \#!/usr/bin/env python
+
+Then one has to configure in the Settings:
+
+1. In 'List of launchers by extension': 
+
+    .py {file_path}
+
+2. In 'Terminal with argument':
+
+ open -a /Applications/Utilities/Terminal.app {working_directory}
+ 
+    or, if just want to run script, then you can suppress the extra terminal by deleting {working_directory}:
+ 
+    open -a /Applications/Utilities/Terminal.app
+
+3. In 'Terminal execution argument':
+
+    -e
+
+4. Unselect 'Use shebang if available'.
+
+*Notice that Settings only need to configure once. But every test.py files has to be changed into excutable and added shebang.
+
+*Notice 'konsole --noclose --workdir' didn't work in this test case.
+
 ## Thanks to:
 [bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto), [marales](https://github.com/marales), [djengineerllc](https://github.com/djengineerllc), [LevPasha](https://github.com/LevPasha)
