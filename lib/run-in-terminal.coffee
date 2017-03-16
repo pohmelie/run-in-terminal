@@ -1,19 +1,19 @@
 child_process = require("child_process")
 path = require("path")
 fs = require("fs")
-
+os = require("os")
 
 interpolate = (s, o) ->
-
-    quote = (s) -> if read_option("autoquotation") then "\"#{s}\"" else s
+    if os.platform() == "darwin"
+      quote = (s) -> if read_option("autoquotation") then "\\\"#{s}\\\"" else s
+    else
+      quote = (s) -> if read_option("autoquotation") then "\"#{s}\"" else s
     choose = (a, b) -> if typeof(o[b]) in ["string", "number"] then o[b] else a
     s.replace(/{([^{}]*)}/g, (a, b) -> quote(choose(a, b)))
-
 
 strip = (s) ->
 
     s.replace(/^\s+|\s+$/g, "")
-
 
 project_directory = (file_dir) ->
 
@@ -76,6 +76,9 @@ start_terminal = (start_path, args) =>
         return
 
     cmd = [read_option("terminal")]
+    if os.platform() == "darwin"
+      cmd = ["""osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \""""]
+      cmd_mac_end = """\"' -e 'end tell'"""
     parameters = {}
     if stats.isFile()
 
@@ -97,19 +100,27 @@ start_terminal = (start_path, args) =>
 
         if shebang
 
-            cmd.push(read_option("terminal_exec_arg"))
+            cmd.push(read_option("terminal_exec_arg")) if read_option("terminal_exec_arg") != "terminal-execution-argument"
             cmd.push(shebang)
             cmd.push(file_path)
+            if os.platform() == "darwin"
+              cmd.push(cmd_mac_end)
 
         else if current_launcher
 
-            cmd.push(read_option("terminal_exec_arg"))
+            cmd.push(read_option("terminal_exec_arg")) if read_option("terminal_exec_arg") != "terminal-execution-argument"
             cmd.push(current_launcher)
+            if os.platform() == "darwin"
+              cmd.push(cmd_mac_end)
 
+        # if os.platform() != "darwin"
         cmd.push(args) if args
 
     else if stats.isDirectory()
-
+        if os.platform() == "darwin"
+          cmd = ["""osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script "cd"""]
+          cmd.push(start_path)
+          cmd.push(cmd_mac_end)
         parameters.working_directory = start_path
 
     else
