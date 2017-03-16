@@ -50,7 +50,7 @@ and «terminal execution argument»:
 | {git_directory}     | path to nearest git root directory|
 
 ## How it works
-In deep, run-in-terminal uses the node.js child_process.exec function, so exec have cwd (current working directory) argument. But it doesn't works for all terminals. Some of them need launch «working directory» argument. That's why run-in-terminal have string interpolation of arguments. What does string interpolation mean? run-in-terminal builds full command at first step and replace predefined substrings with parameters at second. For values from «example value» column above we can have such scenario: opened /path/to/somedir/foo.py, which have #!/usr/bin/python3 shebang
+In deep, run-in-terminal uses the node.js child_process.exec function, so exec have cwd (current working directory) argument. But it doesn't work for all terminals. Some of them need launch «working directory» argument. That's why run-in-terminal have string interpolation of arguments. What does string interpolation mean? run-in-terminal builds full command at first step and replace predefined substrings with parameters at second. For values from «example value» column above we can have such scenario: opened /path/to/somedir/foo.py, which have #!/usr/bin/python3 shebang
 
     start-terminal-here-and-run -> konsole --noclose --workdir {working_directory} -e /usr/bin/python3 {file_path}
 
