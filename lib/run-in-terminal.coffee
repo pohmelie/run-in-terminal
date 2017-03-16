@@ -102,7 +102,7 @@ start_terminal = (start_path, args) =>
 
             cmd.push(read_option("terminal_exec_arg")) if read_option("terminal_exec_arg") != "terminal-execution-argument"
             cmd.push(shebang)
-            cmd.push(file_path)
+            cmd.push("{file_path}")
             if os.platform() == "darwin"
               cmd.push(cmd_mac_end)
 
@@ -118,7 +118,7 @@ start_terminal = (start_path, args) =>
     else if stats.isDirectory()
         if os.platform() == "darwin"
           cmd = ["""osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script "cd"""]
-          cmd.push(start_path)
+          cmd.push("{working_directory}")
           cmd.push(cmd_mac_end)
         parameters.working_directory = start_path
 
@@ -407,7 +407,7 @@ module.exports =
 
         terminal:
 
-            title: "Terminal with arguments"
+            title: "Terminal with arguments (Leave blank for Mac OS X)"
             type: "string"
             default: "your-favorite-terminal --foo --bar"
 
