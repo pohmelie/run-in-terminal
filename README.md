@@ -38,16 +38,8 @@ and «terminal execution argument»:
 
     /k
 
-#### Mac users may use «open» command with their favorite terminal app:
+#### Mac users do not have to select a terminal, as the standard terminal will always load.
 
-    open -a /path/to/terminal.app
-    
-Since terminal.app can't receive execution commands directly from command line, you must choose one:
-* install another terminal
-* run as «just run terminal without commands» (Terminal with argument: `open -a -n /Applications/Utilities/Terminal.app {working_directory}`).
-* run as «run this script by it shebang» (Terminal with argument: `open -a -n /Applications/Utilities/Terminal.app {file_path}`) and add mark script as executable (`chomd +x your-script.py`).
-
-For last two options you should use `start-terminal-here` action.
 
 ## Interpolation parameters
 | Parameter           | Description                       |
@@ -58,7 +50,7 @@ For last two options you should use `start-terminal-here` action.
 | {git_directory}     | path to nearest git root directory|
 
 ## How it works
-In deep, run-in-terminal use node.js child_process.exec function, so exec have cwd (current working directory) argument. But it doesn't works for any terminal. Some of them need launch «working directory» argument. That's why run-in-terminal have string interpolation of arguments. What is string interpolation means? run-in-terminal build full command at first step and replace predefined substrings with parameters at second. For values from «example value» column above we can have such scenario: opened /path/to/somedir/foo.py, which have #!/usr/bin/python3 shebang
+In deep, run-in-terminal uses the node.js child_process.exec function, so exec have cwd (current working directory) argument. But it doesn't works for all terminals. Some of them need launch «working directory» argument. That's why run-in-terminal have string interpolation of arguments. What does string interpolation mean? run-in-terminal builds full command at first step and replace predefined substrings with parameters at second. For values from «example value» column above we can have such scenario: opened /path/to/somedir/foo.py, which have #!/usr/bin/python3 shebang
 
     start-terminal-here-and-run -> konsole --noclose --workdir {working_directory} -e /usr/bin/python3 {file_path}
 
