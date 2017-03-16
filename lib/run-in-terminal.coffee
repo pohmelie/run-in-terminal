@@ -113,7 +113,6 @@ start_terminal = (start_path, args) =>
             if os.platform() == "darwin"
               cmd.push(cmd_mac_end)
 
-        # if os.platform() != "darwin"
         cmd.push(args) if args
 
     else if stats.isDirectory()
