@@ -100,7 +100,7 @@ start_terminal = (start_path, args) =>
 
         if shebang
 
-            cmd.push(read_option("terminal_exec_arg")) if read_option("terminal_exec_arg") != "terminal-execution-argument"
+            cmd.push(read_option("terminal_exec_arg"))
             cmd.push(shebang)
             cmd.push("{file_path}")
             if os.platform() == "darwin"
@@ -108,7 +108,7 @@ start_terminal = (start_path, args) =>
 
         else if current_launcher
 
-            cmd.push(read_option("terminal_exec_arg")) if read_option("terminal_exec_arg") != "terminal-execution-argument"
+            cmd.push(read_option("terminal_exec_arg"))
             cmd.push(current_launcher)
             if os.platform() == "darwin"
               cmd.push(cmd_mac_end)
@@ -243,7 +243,17 @@ class ArgumentsRequester
                 @save_and_hide()
                 start_terminal(@path or "", @line_edit_model.getText())
 
-
+switch require('os').platform()
+  when 'darwin'
+    defaultTerminal = ''
+    defaultTerminal_exec_arg = ''
+  when 'win32'
+    defaultTerminal = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u'
+    defaultTerminal_exec_arg = '/k'
+  else
+    defaultTerminal = 'your-favorite-terminal --foo --bar'
+    defaultTerminal_exec_arg = 'terminal-execution-argument'
+    
 module.exports =
 
     activate: (state) ->
@@ -409,14 +419,14 @@ module.exports =
 
             title: "Terminal with arguments (Leave blank for Mac OS X)"
             type: "string"
-            default: "your-favorite-terminal --foo --bar"
+            default: defaultTerminal
 
         terminal_exec_arg:
 
             title: "Terminal execution argument"
             description: "This is the last flag for executing command directly in terminal (see the readme for more information)"
             type: "string"
-            default: "terminal-execution-argument"
+            default: defaultTerminal_exec_arg
 
         launchers:
 
