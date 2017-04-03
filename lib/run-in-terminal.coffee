@@ -3,17 +3,17 @@ path = require("path")
 fs = require("fs")
 os = require("os")
 
+
 interpolate = (s, o) ->
-    if os.platform() == "darwin"
-      quote = (s) -> if read_option("autoquotation") then "\\\"#{s}\\\"" else s
-    else
-      quote = (s) -> if read_option("autoquotation") then "\"#{s}\"" else s
+
     choose = (a, b) -> if typeof(o[b]) in ["string", "number"] then o[b] else a
-    s.replace(/{([^{}]*)}/g, (a, b) -> quote(choose(a, b)))
+    s.replace(/{([^{}]*)}/g, (a, b) -> choose(a, b))
+
 
 strip = (s) ->
 
     s.replace(/^\s+|\s+$/g, "")
+
 
 project_directory = (file_dir) ->
 
@@ -75,10 +75,7 @@ start_terminal = (start_path, args) =>
         )
         return
 
-    cmd = [read_option("terminal")]
-    if os.platform() == "darwin"
-      cmd = ["""osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \""""]
-      cmd_mac_end = """\"' -e 'end tell'"""
+    cmd = read_option("launchfile")
     parameters = {}
     if stats.isFile()
 
@@ -90,37 +87,32 @@ start_terminal = (start_path, args) =>
 
             shebang = read_shebang(file_path)
 
-        for pair in read_option("launchers").split(",").map(strip)
+        for pair in read_option("programs").split(",").map(strip)
 
-            [end, launcher...] = pair.split(" ").map(strip)
+            [end, program...] = pair.split(" ").map(strip)
             if file_path.indexOf(end, file_path.length - end.length) != -1
 
-                current_launcher = launcher.join(" ")
+                current_program = program.join(" ")
                 break
 
         if shebang
 
-            cmd.push(read_option("terminal_exec_arg"))
-            cmd.push(shebang)
-            cmd.push("{file_path}")
-            if os.platform() == "darwin"
-              cmd.push(cmd_mac_end)
+          parameters.launcher = shebang
 
-        else if current_launcher
+        else if current_program
 
-            cmd.push(read_option("terminal_exec_arg"))
-            cmd.push(current_launcher)
-            if os.platform() == "darwin"
-              cmd.push(cmd_mac_end)
+          parameters.launcher = current_program
 
-        cmd.push(args) if args
+        else
+
+          atom.notifications.addError('Run-in-terminal: No program found in "List of programs" for current filetype or shebang not found')
+
+        parameters.args = args
 
     else if stats.isDirectory()
-        if os.platform() == "darwin"
-          cmd = ["""osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script "cd"""]
-          cmd.push("{working_directory}")
-          cmd.push(cmd_mac_end)
-        parameters.working_directory = start_path
+
+      cmd = read_option("launchdir")
+      parameters.working_directory = start_path
 
     else
 
@@ -141,8 +133,9 @@ start_terminal = (start_path, args) =>
 
         exec_cwd = null
 
-    cmd_line = interpolate(cmd.join(" "), parameters)
+    cmd_line = interpolate(cmd, parameters)
     child_process.exec(cmd_line, cwd: exec_cwd, (error, stdout, stderr) ->
+
 
         if error
 
@@ -206,7 +199,8 @@ class ArgumentsRequester
 
         })
 
-        @line_edit_view.addEventListener("focusout", @save_and_hide)
+        # Request args does not work if below line is uncommented? (OS X)
+        # @line_edit_view.addEventListener("focusout", @save_and_hide)
         @line_edit_view.addEventListener("keydown", @key_pressed)
 
         @attributes_memory = {}
@@ -245,15 +239,15 @@ class ArgumentsRequester
 
 switch require('os').platform()
   when 'darwin'
-    defaultTerminal = ''
-    defaultTerminal_exec_arg = ''
+    defaultLaunchfile = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" && {launcher} \\\"{file_path}\\\" \"' -e 'end tell'"""
+    defaultLaunchdir = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" \"' -e 'end tell'"""
   when 'win32'
-    defaultTerminal = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u'
-    defaultTerminal_exec_arg = '/k'
+    defaultLaunchfile = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}" & {launcher} "{file_path}"'
+    defaultLaunchdir = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}"'
   else
-    defaultTerminal = 'your-favorite-terminal --foo --bar'
-    defaultTerminal_exec_arg = 'terminal-execution-argument'
-    
+    defaultLaunchfile = 'your-favorite-terminal --foo --bar "{working_directory}" && {launcher} "{file_path}"'
+    defaultLaunchdir = 'your-favorite-terminal --foo --bar "{working_directory}"'
+
 module.exports =
 
     activate: (state) ->
@@ -376,12 +370,9 @@ module.exports =
 
             start_path = path.dirname(start_path) if not should_run
             if request_arguments
-
-                @arguments_view.show(start_path)
-
+              @arguments_view.show(start_path)
             else
-
-                start_terminal(start_path)
+              start_terminal(start_path)
 
     config:
 
@@ -389,55 +380,58 @@ module.exports =
 
             title: "Use exec cwd argument when launching terminal"
             type: "boolean"
+            order: 4
             default: true
 
         use_shebang:
 
             title: "Use shebang if available"
             type: "boolean"
+            order: 6
             default: true
 
         maximum_shebang_length:
 
             title: "Maximum length of shebang to read"
             type: "integer"
+            order: 7
             default: 256
 
         save_before_launch:
 
             title: "Save file before run terminal"
             type: "boolean"
+            order: 2
             default: true
 
-        autoquotation:
+        launchfile:
 
-            title: "Autoquote paths with double quotation mark"
-            type: "boolean"
-            default: true
-
-        terminal:
-
-            title: "Terminal with arguments (Leave blank for Mac OS X)"
+            title: "Launch file in terminal command"
+            description: "Enter the command to open and run a file in the terminal"
             type: "string"
-            default: defaultTerminal
+            order: 1
+            default: defaultLaunchfile
 
-        terminal_exec_arg:
+        launchdir:
 
-            title: "Terminal execution argument"
-            description: "This is the last flag for executing command directly in terminal (see the readme for more information)"
+            title: "Launch directory in terminal command"
+            description: "Enter the command to open the terminal in the defined directory"
             type: "string"
-            default: defaultTerminal_exec_arg
+            order: 3
+            default: defaultLaunchdir
 
-        launchers:
+        programs:
 
-            title: "List of launchers by extension"
+            title: "List of programs by extension"
             description: "See the readme for more information"
             type: "string"
-            default: "your-launchers"
+            order: 5
+            default: ".py python, .java javac, .coffee coffee"
 
         context_menu:
 
             title: "Show commands in context menu"
             description: "Need restart (ctrl-alt-r)"
             type: "boolean"
+            order: 8
             default: true
