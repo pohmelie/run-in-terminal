@@ -7,7 +7,7 @@ os = require("os")
 interpolate = (s, o) ->
 
     choose = (a, b) -> if typeof(o[b]) in ["string", "number"] then o[b] else a
-    s.replace(/{([^{}]*)}/g, (a, b) -> choose(a, b))
+    s.replace(/{([^{}]*)}/g, choose)
 
 
 strip = (s) ->
@@ -87,32 +87,32 @@ start_terminal = (start_path, args) =>
 
             shebang = read_shebang(file_path)
 
-        for pair in read_option("programs").split(",").map(strip)
+        for pair in read_option("launchers").split(",").map(strip)
 
-            [end, program...] = pair.split(" ").map(strip)
+            [end, launcher...] = pair.split(" ").map(strip)
             if file_path.indexOf(end, file_path.length - end.length) != -1
 
-                current_program = program.join(" ")
+                current_launcher = launcher.join(" ")
                 break
 
         if shebang
 
-          parameters.launcher = shebang
+            parameters.launcher = shebang
 
-        else if current_program
+        else if current_launcher
 
-          parameters.launcher = current_program
+            parameters.launcher = current_launcher
 
         else
 
-          atom.notifications.addError('Run-in-terminal: No program found in "List of programs" for current filetype or shebang not found')
+            atom.notifications.addError('Run-in-terminal: No program found in "List of programs" for current filetype or shebang not found')
 
         parameters.args = args
 
     else if stats.isDirectory()
 
-      cmd = read_option("launchdir")
-      parameters.working_directory = start_path
+        cmd = read_option("launchdir")
+        parameters.working_directory = start_path
 
     else
 
@@ -135,7 +135,6 @@ start_terminal = (start_path, args) =>
 
     cmd_line = interpolate(cmd, parameters)
     child_process.exec(cmd_line, cwd: exec_cwd, (error, stdout, stderr) ->
-
 
         if error
 
@@ -199,8 +198,7 @@ class ArgumentsRequester
 
         })
 
-        # Request args does not work if below line is uncommented? (OS X)
-        # @line_edit_view.addEventListener("focusout", @save_and_hide)
+        @line_edit_view.addEventListener("focusout", @save_and_hide)
         @line_edit_view.addEventListener("keydown", @key_pressed)
 
         @attributes_memory = {}
@@ -238,15 +236,18 @@ class ArgumentsRequester
                 start_terminal(@path or "", @line_edit_model.getText())
 
 switch require('os').platform()
-  when 'darwin'
-    defaultLaunchfile = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" && {launcher} \\\"{file_path}\\\" \"' -e 'end tell'"""
-    defaultLaunchdir = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" \"' -e 'end tell'"""
-  when 'win32'
-    defaultLaunchfile = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}" & {launcher} "{file_path}"'
-    defaultLaunchdir = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}"'
-  else
-    defaultLaunchfile = 'your-favorite-terminal --foo --bar "{working_directory}" && {launcher} "{file_path}"'
-    defaultLaunchdir = 'your-favorite-terminal --foo --bar "{working_directory}"'
+
+    when 'darwin'
+        default_Launchfile = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" && {launcher} \\\"{file_path}\\\" \"' -e 'end tell'"""
+        default_Launchdir = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" \"' -e 'end tell'"""
+
+    when 'win32'
+        default_Launchfile = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}" {launcher} "{file_path}"'
+        default_Launchdir = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}"'
+
+    else
+        default_Launchfile = 'your-favorite-terminal --foo --bar "{working_directory}" {launcher} "{file_path}"'
+        default_Launchdir = 'your-favorite-terminal --foo --bar "{working_directory}"'
 
 module.exports =
 
@@ -370,9 +371,12 @@ module.exports =
 
             start_path = path.dirname(start_path) if not should_run
             if request_arguments
-              @arguments_view.show(start_path)
-            else
-              start_terminal(start_path)
+
+                    @arguments_view.show(start_path)
+
+                else
+
+                    start_terminal(start_path)
 
     config:
 
@@ -410,7 +414,7 @@ module.exports =
             description: "Enter the command to open and run a file in the terminal"
             type: "string"
             order: 1
-            default: defaultLaunchfile
+            default: default_Launchfile
 
         launchdir:
 
@@ -418,9 +422,9 @@ module.exports =
             description: "Enter the command to open the terminal in the defined directory"
             type: "string"
             order: 3
-            default: defaultLaunchdir
+            default: default_Launchdir
 
-        programs:
+        launchers:
 
             title: "List of programs by extension"
             description: "See the readme for more information"
