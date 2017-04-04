@@ -372,11 +372,11 @@ module.exports =
             start_path = path.dirname(start_path) if not should_run
             if request_arguments
 
-                    @arguments_view.show(start_path)
+                @arguments_view.show(start_path)
 
-                else
+            else
 
-                    start_terminal(start_path)
+                start_terminal(start_path)
 
     config:
 
