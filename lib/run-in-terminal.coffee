@@ -198,7 +198,7 @@ class ArgumentsRequester
 
         })
 
-        @line_edit_view.addEventListener("focusout", @save_and_hide)
+        @line_edit_view.addEventListener("blur", @save_and_hide)
         @line_edit_view.addEventListener("keydown", @key_pressed)
 
         @attributes_memory = {}
@@ -238,16 +238,16 @@ class ArgumentsRequester
 switch require('os').platform()
 
     when 'darwin'
-        default_Launchfile = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" && {launcher} \\\"{file_path}\\\" \"' -e 'end tell'"""
-        default_Launchdir = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" \"' -e 'end tell'"""
+        default_launchfile = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" && {launcher} \\\"{file_path}\\\" \"' -e 'end tell'"""
+        default_launchdir = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" \"' -e 'end tell'"""
 
     when 'win32'
-        default_Launchfile = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}" {launcher} "{file_path}"'
-        default_Launchdir = 'start /D {working_directory} C:\Windows\System32\cmd.exe /u /k cd "{working_directory}"'
+        default_launchfile = 'start /D {working_directory} C:\\Windows\\System32\\cmd.exe /u /k {launcher} "{file_path}"'
+        default_launchdir = 'start /D {working_directory} C:\\Windows\\System32\\cmd.exe /u /k'
 
     else
-        default_Launchfile = 'your-favorite-terminal --foo --bar "{working_directory}" {launcher} "{file_path}"'
-        default_Launchdir = 'your-favorite-terminal --foo --bar "{working_directory}"'
+        default_launchfile = 'your-favorite-terminal --foo --bar "{working_directory}" {launcher} "{file_path}"'
+        default_launchdir = 'your-favorite-terminal --foo --bar "{working_directory}"'
 
 module.exports =
 
@@ -414,7 +414,7 @@ module.exports =
             description: "Enter the command to open and run a file in the terminal"
             type: "string"
             order: 1
-            default: default_Launchfile
+            default: default_launchfile
 
         launchdir:
 
@@ -422,7 +422,7 @@ module.exports =
             description: "Enter the command to open the terminal in the defined directory"
             type: "string"
             order: 3
-            default: default_Launchdir
+            default: default_launchdir
 
         launchers:
 
