@@ -11,18 +11,16 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 * start terminal here and run some command with extra arguments
 * string interpolation with arguments
 * understanding shebang (utf-8 only)
-* programs — file extension based program chooser
+* launchers — file extension based launcher chooser
 * separate context menus for tabs, tree and editor
 
 ## What's new ([changelog](https://github.com/pohmelie/run-in-terminal/blob/master/CHANGELOG.md))
-#### 0.6.1 - Improved OS X support
+#### 1.0.0 - Improved OS X support
 * feature: OS X users can now run any file directly in the terminal, based on configurable Applescript command.
-* feature: Default settings added for OS X and Windows users.
-* note: Not backward compatible with previous versions, please update your settings.
-* note: Autoquotation removed from the settings menu, as quotes can now be directly edited in the commands.
-
-#### 0.6.0 - run with arguments
-* feature: start terminal and run with extra arguments
+* feature: default settings added for OS X and Windows users.
+* fix: disappearing arguments input field.
+* note: not backward compatible with previous versions, please update your settings. You should remove all `run-in-terminal` settings from `config.cson` file.
+* note: autoquotation removed from the settings menu, as quotes can now be directly edited in the commands.
 
 ## Options
 
