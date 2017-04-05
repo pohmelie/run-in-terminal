@@ -240,13 +240,13 @@ switch require("os").platform()
 
     when "win32"
 
-        default_launchfile = 'start /D "{working_directory}" C:\\Windows\\System32\\cmd.exe /u /k "{launcher}" "{file_path}" {args}'
-        default_launchdir = 'start /D "{working_directory}" C:\\Windows\\System32\\cmd.exe /u /k'
+        default_launchfile = """start /D "{working_directory}" C:\\Windows\\System32\\cmd.exe /u /k "{launcher}" "{file_path}" {args}"""
+        default_launchdir = """start /D "{working_directory}" C:\\Windows\\System32\\cmd.exe /u /k"""
 
     else
 
-        default_launchfile = 'your-favorite-terminal --foo --bar "{working_directory}" --execute "{launcher}" "{file_path}" {args}'
-        default_launchdir = 'your-favorite-terminal --foo --bar "{working_directory}"'
+        default_launchfile = """your-favorite-terminal --foo --bar "{working_directory}" --execute "{launcher}" "{file_path}" {args}"""
+        default_launchdir = """your-favorite-terminal --foo --bar "{working_directory}""""
 
 module.exports =
 
