@@ -1,3 +1,12 @@
+## 1.0.0 - Improved OS X support
+* feature: OS X users can now run any file directly in the terminal, based on configurable Applescript command.
+* feature: default settings added for OS X and Windows users.
+* fix: disappearing arguments input field.
+* note: not backward compatible with previous versions, please update your settings. You should remove all `run-in-terminal` settings from `config.cson` file.
+* note: autoquotation removed from the settings menu, as quotes can now be directly edited in the commands.
+
+Thanks to [jnelissen](https://github.com/jnelissen).
+
 ## 0.6.0 - run with arguments
 * feature: start terminal and run with extra arguments
 
