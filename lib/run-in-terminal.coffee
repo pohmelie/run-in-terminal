@@ -246,7 +246,7 @@ switch require("os").platform()
     else
 
         default_launchfile = """your-favorite-terminal --foo --bar "{working_directory}" --execute "{launcher}" "{file_path}" {args}"""
-        default_launchdir = """your-favorite-terminal --foo --bar "{working_directory}""""
+        default_launchdir = """your-favorite-terminal --foo --bar "{working_directory}\""""
 
 module.exports =
 
