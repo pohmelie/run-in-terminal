@@ -107,7 +107,7 @@ start_terminal = (start_path, args) =>
 
             atom.notifications.addError('Run-in-terminal: No program found in "List of programs" for current filetype or shebang not found')
 
-        parameters.args = args
+        parameters.args = args or ""
 
     else if stats.isDirectory()
 
@@ -116,11 +116,7 @@ start_terminal = (start_path, args) =>
 
     else
 
-        console.error(
-            """
-            run-in-terminal error: #{start_path} is not file or dir
-            """
-        )
+        console.error("run-in-terminal error: #{start_path} is not file or dir")
 
     parameters.project_directory = project_directory(parameters.working_directory)
     parameters.git_directory = git_directory(parameters.working_directory)
@@ -235,18 +231,21 @@ class ArgumentsRequester
                 @save_and_hide()
                 start_terminal(@path or "", @line_edit_model.getText())
 
-switch require('os').platform()
+switch require("os").platform()
 
-    when 'darwin'
+    when "darwin"
+
         default_launchfile = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" && {launcher} \\\"{file_path}\\\" \"' -e 'end tell'"""
         default_launchdir = """osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'tell application \"Terminal\" to do script \"cd \\\"{working_directory}\\\" \"' -e 'end tell'"""
 
-    when 'win32'
-        default_launchfile = 'start /D {working_directory} C:\\Windows\\System32\\cmd.exe /u /k {launcher} "{file_path}"'
-        default_launchdir = 'start /D {working_directory} C:\\Windows\\System32\\cmd.exe /u /k'
+    when "win32"
+
+        default_launchfile = 'start /D "{working_directory}" C:\\Windows\\System32\\cmd.exe /u /k "{launcher}" "{file_path}" {args}'
+        default_launchdir = 'start /D "{working_directory}" C:\\Windows\\System32\\cmd.exe /u /k'
 
     else
-        default_launchfile = 'your-favorite-terminal --foo --bar "{working_directory}" {launcher} "{file_path}"'
+
+        default_launchfile = 'your-favorite-terminal --foo --bar "{working_directory}" --execute "{launcher}" "{file_path}" {args}'
         default_launchdir = 'your-favorite-terminal --foo --bar "{working_directory}"'
 
 module.exports =
@@ -426,7 +425,7 @@ module.exports =
 
         launchers:
 
-            title: "List of programs by extension"
+            title: "List of launchers by extension"
             description: "See the readme for more information"
             type: "string"
             order: 5
