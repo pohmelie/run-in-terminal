@@ -1,3 +1,8 @@
+## 1.0.1 - Add atom v1.19 support
+* fix [#19](https://github.com/pohmelie/run-in-terminal/issues/19)
+
+Thanks to [maxbrunsfeld](https://github.com/maxbrunsfeld)
+
 ## 1.0.0 - Improved OS X support
 * feature: OS X users can now run any file directly in the terminal, based on configurable Applescript command.
 * feature: default settings added for OS X and Windows users.

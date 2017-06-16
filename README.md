@@ -15,12 +15,8 @@ Some packages can run terminal «here», some can run scripts not in terminal, b
 * separate context menus for tabs, tree and editor
 
 ## What's new ([changelog](https://github.com/pohmelie/run-in-terminal/blob/master/CHANGELOG.md))
-#### 1.0.0 - Improved OS X support
-* feature: OS X users can now run any file directly in the terminal, based on configurable Applescript command.
-* feature: default settings added for OS X and Windows users.
-* fix: disappearing arguments input field.
-* note: not backward compatible with previous versions, please update your settings. You should remove all `run-in-terminal` settings from `config.cson` file.
-* note: autoquotation removed from the settings menu, as quotes can now be directly edited in the commands.
+#### 1.0.1 - Add atom v1.19 support
+* fix [#19](https://github.com/pohmelie/run-in-terminal/issues/19)
 
 ## Options
 
@@ -59,4 +55,4 @@ this will be interpolated to:
 If run-in-terminal can't determine launcher or file_path (file not saved and has no name) it will do start-terminal-here.
 
 ## Thanks to:
-[bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto), [marales](https://github.com/marales), [djengineerllc](https://github.com/djengineerllc), [LevPasha](https://github.com/LevPasha), [Kee-Wang](https://github.com/Kee-Wang), [jnelissen](https://github.com/jnelissen).
+[bobrocke](https://github.com/bobrocke), [clintwood](https://github.com/clintwood), [LeoVerto](https://github.com/LeoVerto), [marales](https://github.com/marales), [djengineerllc](https://github.com/djengineerllc), [LevPasha](https://github.com/LevPasha), [Kee-Wang](https://github.com/Kee-Wang), [jnelissen](https://github.com/jnelissen), [maxbrunsfeld](https://github.com/maxbrunsfeld).
