@@ -1,3 +1,5 @@
+# THIS PACKAGE IS OUTDATED
+
 # run-in-terminal package
 
 Atom package for executing your current file directly in terminal, or just open the terminal with a specified directory.
